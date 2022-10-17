@@ -131,20 +131,30 @@ class Shop {
 	}
 }
 
-const shop = new Shop([
-	new LegendaryItem("Sulfuras, Hand of Ragnaros", 80),
-	new BasicItem("Aged Brie", 10, 0, 1),
-	new BasicItem("Witchwood Apple", 3, 15),
-	new BasicItem("Diving Elixir", 11, 50),
-	new BackstagePass("Backstage passes to a TAFKAL80ETC concert", 15, 5),
-	new BackstagePass("Backstage passes to a TAFKAL80ETC concert", 25, 5),
-	new BackstagePass("Backstage passes to an Ice Cream Boys concert", 25, 5),
-	new ConjuredItem("Conjured Wizard Hat", 20, 50),
-	new ConjuredItem("Conjured Wizard Robes", 16, 50)
-]);
-
-shop.printStock();
-for (let day = 1; day < 21; day++) {
-	shop.updateQuality();
-	shop.printStock();
+function sleep(seconds) {
+	return new Promise(resolve => setTimeout(resolve, seconds * 1000));
 }
+
+async function main() {
+	const shop = new Shop([
+		new LegendaryItem("Sulfuras, Hand of Ragnaros", 80),
+		new BasicItem("Aged Brie", 10, 0, 1),
+		new BasicItem("Witchwood Apple", 3, 15),
+		new BasicItem("Diving Elixir", 11, 50),
+		new BackstagePass("Backstage passes to a TAFKAL80ETC concert", 15, 5),
+		new BackstagePass("Backstage passes to a TAFKAL80ETC concert", 25, 5),
+		new BackstagePass("Backstage passes to an Ice Cream Boys concert", 25, 5),
+		new ConjuredItem("Conjured Wizard Hat", 20, 50),
+		new ConjuredItem("Conjured Wizard Robes", 16, 50)
+	]);
+
+	shop.printStock();
+
+	while (true) {
+		shop.updateQuality();
+		shop.printStock();
+		await sleep(10);
+	}
+}
+
+main();
