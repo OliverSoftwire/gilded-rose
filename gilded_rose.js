@@ -57,17 +57,77 @@ class BackstagePass extends Item {
 	}
 }
 
+class TablePrinter {
+	constructor(columnNames) {
+		this.columnHeaders = columnNames.map(name => {
+			return {
+				name: name,
+				longestString: name.length
+			}
+		});
+		this.rows = [];
+	}
+
+	pushRow(row) {
+		if (row.length !== this.columnHeaders.length) {
+			throw "Row width does not match number of columns";
+		}
+
+		row = row.map(field => field.toString());
+
+		for (let column = 0; column < this.columnHeaders.length; column++) {
+			this.columnHeaders[column].longestString = Math.max(
+				this.columnHeaders[column].longestString,
+				row[column].length
+			);
+		}
+
+		this.rows.push(row);
+	}
+
+	toString() {
+		let buffer = "";
+		
+		this.columnHeaders.forEach(header => {
+			const padding = header.longestString - header.name.length;
+			buffer += header.name + " ".repeat(padding) + " | ";
+		});
+		buffer = buffer.slice(0, -3);
+
+		this.rows.forEach(row => {
+			buffer += "\n";
+
+			for (let column = 0; column < this.columnHeaders.length; column++) {
+				const padding = this.columnHeaders[column].longestString - row[column].length;
+				buffer += " ".repeat(padding) + row[column] + " | ";
+			}
+
+			buffer = buffer.slice(0, -3);
+		})
+
+		return buffer;
+	}
+
+	print() {
+		console.log(this.toString());
+	}
+}
+
 class Shop {
 	constructor(items = []) {
 		this.items = items;
+		this.day = 0;
 	}
 
 	updateQuality() {
 		this.items.forEach(item => item.updateQuality());
+		this.day++;
 	}
 
 	printStock() {
-		this.items.forEach(item => console.log(item));
+		const tablePrinter = new TablePrinter([`End of day ${this.day}`, "Sel", "Qua"]);
+		this.items.forEach(item => tablePrinter.pushRow([item.name, item.sellIn, item.quality]));
+		tablePrinter.print();
 	}
 }
 
