@@ -60,6 +60,18 @@
 		<script src="https://unpkg.com/bootstrap-table@1.21.1/dist/bootstrap-table.min.js"></script>
 
 		<script>
+			const items = [
+				new LegendaryItem("Sulfuras, Hand of Ragnaros", 80),
+				new BasicItem("Aged Brie", 10, 0, 1),
+				new BasicItem("Witchwood Apple", 3, 15),
+				new BasicItem("Diving Elixir", 11, 50),
+				new BackstagePass("Backstage passes to a TAFKAL80ETC concert", 15, 5),
+				new BackstagePass("Backstage passes to a TAFKAL80ETC concert", 25, 5),
+				new BackstagePass("Backstage passes to an Ice Cream Boys concert", 25, 5),
+				new ConjuredItem("Conjured Wizard Hat", 20, 50),
+				new ConjuredItem("Conjured Wizard Robes", 16, 50)
+			];
+
 			function disableEditMode() {
 				document.getElementById("reset").disabled = false;
 
@@ -85,10 +97,11 @@
 			const deleteEvents = {
 				"click .delete": (e, value, row, index) => {
 					$("table").bootstrapTable("remove", {
-						field: "$index",
-						values: [index]
+						field: "id",
+						values: [row.id]
 					});
-					console.log("test");
+
+					items.splice(row.id, 1);
 				}
 			}
 
@@ -126,42 +139,38 @@
 				});
 			}
 
-			function updateTable(shop) {
-				$("#table").bootstrapTable("load", shop.items);
+			function updateTable(items) {
+				$("#table").bootstrapTable("load", items.map((item, idx) => {return {
+					id: idx,
+					name: item.name,
+					sellIn: item.sellIn,
+					quality: item.quality
+				}}));
 			}
 
-			const items = [
-				new LegendaryItem("Sulfuras, Hand of Ragnaros", 80),
-				new BasicItem("Aged Brie", 10, 0, 1),
-				new BasicItem("Witchwood Apple", 3, 15),
-				new BasicItem("Diving Elixir", 11, 50),
-				new BackstagePass("Backstage passes to a TAFKAL80ETC concert", 15, 5),
-				new BackstagePass("Backstage passes to a TAFKAL80ETC concert", 25, 5),
-				new BackstagePass("Backstage passes to an Ice Cream Boys concert", 25, 5),
-				new ConjuredItem("Conjured Wizard Hat", 20, 50),
-				new ConjuredItem("Conjured Wizard Robes", 16, 50)
-			];
-
-			let shop;
+			let shop = undefined;
 			initTable();
 			reset();
 
 			function nextDay() {
+				if (shop === undefined) {
+					shop = new Shop(items);
+				}
+
 				shop.updateQuality();
 				shop.printStock();
 
 				setTableHeader(`End of day ${shop.day}`);
-				updateTable(shop);
+				updateTable(shop.items);
 
 				disableEditMode();
 			}
 
 			function reset() {
-				shop = new Shop(items);
-				shop.printStock();
+				shop = undefined;
 
 				setTableHeader(`Shop Items`);
-				updateTable(shop);
+				updateTable(items);
 
 				enableEditMode();
 			}
