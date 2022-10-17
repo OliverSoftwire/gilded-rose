@@ -25,7 +25,9 @@ class BasicItem extends Item {
 
 	updateQuality() {
 		this.sellIn--;
-		this.setQuality(this.quality + this.qualityChange * (this.sellIn >= 0 ? 1 : 2));
+
+		const qualityMultiplier = this.sellIn >= 0 ? 1 : 2;
+		this.setQuality(this.quality + this.qualityChange * qualityMultiplier);
 	}
 }
 
