@@ -34,19 +34,21 @@
 
 		<div class="mt-2">
 			<div class="btn-group">
-				<button type="button" class="btn btn-success" disabled><i class="bi-plus-lg"></i> New Item</button>
+				<button id="new-basic-item" type="button" class="btn btn-success"><i class="bi-plus-lg"></i> New Item</button>
 				<button
+					id="new-item-dropdown"
 					type="button"
 					class="btn btn-success dropdown-toggle dropdown-toggle-split"
 					data-bs-toggle="dropdown"
 					aria-haspopup="true"
 					aria-expanded="false"
-					disabled
 				></button>
 				<div class="dropdown-menu">
-					<a class="dropdown-item" href="#">Action</a>
-					<a class="dropdown-item" href="#">Another action</a>
-					<a class="dropdown-item" href="#">Something else here</a>
+					<a class="dropdown-item" href="#">Basic</a>
+					<a class="dropdown-item" href="#">Conjured</a>
+					<a class="dropdown-item" href="#">Legendary</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" href="#">Backstage Pass</a>
 				</div>
 			</div>
 			<button onclick="nextDay()" type="button" class="btn btn-primary">Next Day</button>
@@ -74,6 +76,8 @@
 
 			function disableEditMode() {
 				document.getElementById("reset").disabled = false;
+				document.getElementById("new-basic-item").disabled = true;
+				document.getElementById("new-item-dropdown").disabled = true;
 
 				const deleteButtons = document.getElementsByClassName("delete");
 				for (let i = 0; i < deleteButtons.length; i++) {
@@ -83,6 +87,8 @@
 
 			function enableEditMode() {
 				document.getElementById("reset").disabled = true;
+				document.getElementById("new-basic-item").disabled = false;
+				document.getElementById("new-item-dropdown").disabled = false;
 
 				const deleteButtons = document.getElementsByClassName("delete");
 				for (let i = 0; i < deleteButtons.length; i++) {
