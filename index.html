@@ -16,23 +16,41 @@
 			body {
 				padding: 15px;
 			}
+
+			.delete {
+				font-size: large;
+				color: var(--bs-danger);
+			}
+
+			.disabled {
+				pointer-events: none;
+				color: darkgray;
+			}
 		</style>
 	</head>
 	<body>
 		<h1 id="table-header">Shop Items</h1>
-		<table id="table" data-toggle="table">
-			<thead>
-				<tr>
-					<th data-field="name" data-sortable="true">Name</th>
-					<th data-field="sellIn" data-sortable="true">Sell In</th>
-					<th data-field="quality" data-sortable="true">Quality</th>
-				</tr>
-			</thead>
-		</table>
+		<table id="table" data-toggle="table"></table>
 
-		<div style="margin-top: 10px;">
+		<div class="mt-2">
+			<div class="btn-group">
+				<button type="button" class="btn btn-success" disabled><i class="bi-plus-lg"></i> New Item</button>
+				<button
+					type="button"
+					class="btn btn-success dropdown-toggle dropdown-toggle-split"
+					data-bs-toggle="dropdown"
+					aria-haspopup="true"
+					aria-expanded="false"
+					disabled
+				></button>
+				<div class="dropdown-menu">
+					<a class="dropdown-item" href="#">Action</a>
+					<a class="dropdown-item" href="#">Another action</a>
+					<a class="dropdown-item" href="#">Something else here</a>
+				</div>
+			</div>
 			<button onclick="nextDay()" type="button" class="btn btn-primary">Next Day</button>
-			<button onclick="reset()" type="button" class="btn btn-danger">Reset</button>
+			<button onclick="reset()" id="reset" type="button" class="btn btn-danger">Reset</button>
 		</div>
 
 		<script src="gilded_rose.js"></script>
@@ -42,8 +60,70 @@
 		<script src="https://unpkg.com/bootstrap-table@1.21.1/dist/bootstrap-table.min.js"></script>
 
 		<script>
+			function disableEditMode() {
+				document.getElementById("reset").disabled = false;
+
+				const deleteButtons = document.getElementsByClassName("delete");
+				for (let i = 0; i < deleteButtons.length; i++) {
+					deleteButtons[i].classList.add("disabled");
+				}
+			}
+
+			function enableEditMode() {
+				document.getElementById("reset").disabled = true;
+
+				const deleteButtons = document.getElementsByClassName("delete");
+				for (let i = 0; i < deleteButtons.length; i++) {
+					deleteButtons[i].classList.remove("disabled");
+				}
+			}
+
 			function setTableHeader(newHeader) {
 				document.getElementById("table-header").innerText = newHeader;
+			}
+
+			const deleteEvents = {
+				"click .delete": (e, value, row, index) => {
+					$("table").bootstrapTable("remove", {
+						field: "$index",
+						values: [index]
+					});
+					console.log("test");
+				}
+			}
+
+			function initTable() {
+				$("#table").bootstrapTable("destroy").bootstrapTable({
+					columns: [
+						{
+							field: "id",
+							visible: false
+						},
+						{
+							field: "delete",
+							align: "center",
+							clickToSelect: false,
+							events: deleteEvents,
+							formatter: (value, row, index) => `<a class="delete"><i class="bi-trash"></i></a>`
+						},
+
+						{
+							field: "name",
+							title: "Item Name",
+							sortable: true
+						},
+						{
+							field: "sellIn",
+							title: "Sell In",
+							sortable: true
+						},
+						{
+							field: "quality",
+							title: "Quality",
+							sortable: true
+						}
+					]
+				});
 			}
 
 			function updateTable(shop) {
@@ -63,7 +143,7 @@
 			];
 
 			let shop;
-			$("#table").bootstrapTable({});
+			initTable();
 			reset();
 
 			function nextDay() {
@@ -72,6 +152,8 @@
 
 				setTableHeader(`End of day ${shop.day}`);
 				updateTable(shop);
+
+				disableEditMode();
 			}
 
 			function reset() {
@@ -80,6 +162,8 @@
 
 				setTableHeader(`Shop Items`);
 				updateTable(shop);
+
+				enableEditMode();
 			}
 		</script>
 	</body>
