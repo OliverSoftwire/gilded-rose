@@ -34,6 +34,7 @@
 		</table>
 
 		<button onclick="nextDay()" type="button" class="btn btn-primary">Next Day</button>
+		<button onclick="reset()" type="button" class="btn btn-danger">Reset</button>
 
 		<script src="gilded_rose.js"></script>
 		<script>
@@ -56,7 +57,7 @@
 				})
 			}
 
-			const shop = new Shop([
+			const items = [
 				new LegendaryItem("Sulfuras, Hand of Ragnaros", 80),
 				new BasicItem("Aged Brie", 10, 0, 1),
 				new BasicItem("Witchwood Apple", 3, 15),
@@ -66,19 +67,25 @@
 				new BackstagePass("Backstage passes to an Ice Cream Boys concert", 25, 5),
 				new ConjuredItem("Conjured Wizard Hat", 20, 50),
 				new ConjuredItem("Conjured Wizard Robes", 16, 50)
-			]);
+			];
 
-			shop.printStock();
-
-			setTableHeader(`Shop Items`);
-			const rows = shop.items.map(item => [item.name, item.sellIn, item.quality]);
-			updateRows(rows);
+			let shop;
+			reset();
 
 			function nextDay() {
 				shop.updateQuality();
 				shop.printStock();
 
 				setTableHeader(`End of day ${shop.day}`);
+				const rows = shop.items.map(item => [item.name, item.sellIn, item.quality]);
+				updateRows(rows);
+			}
+
+			function reset() {
+				shop = new Shop(items);
+				shop.printStock();
+
+				setTableHeader(`Shop Items`);
 				const rows = shop.items.map(item => [item.name, item.sellIn, item.quality]);
 				updateRows(rows);
 			}

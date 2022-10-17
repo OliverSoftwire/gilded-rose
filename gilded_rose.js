@@ -5,6 +5,10 @@ class Item {
 		this.quality = quality;
 	}
 
+	clone() {
+		return Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+	}
+
 	setQuality(quality) {
 		this.quality = Math.min(Math.max(quality, 0), 50);
 	}
@@ -115,7 +119,7 @@ class TablePrinter {
 
 class Shop {
 	constructor(items = []) {
-		this.items = items;
+		this.items = items.map(item => item.clone());
 		this.day = 0;
 	}
 
