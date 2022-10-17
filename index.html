@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+		<title>Gilded Rose</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+		<style>
+			body {
+				padding: 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<table class="table caption-top">
+			<caption id="table-header">End of day X</caption>
+			<thead>
+				<tr>
+					<th scope="col">Name</th>
+					<th scope="col">Sell In</th>
+					<th scope="col">Quality</th>
+				</tr>
+			</thead>
+			<tbody id="table-body">
+				<tr>
+					<td>Item Name</td>
+					<td>0</td>
+					<td>50</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<button onclick="nextDay()">NEXT DAY</button>
+
+		<script src="gilded_rose.js"></script>
+		<script>
+			function setTableHeader(newHeader) {
+				document.getElementById("table-header").innerText = newHeader;
+			}
+
+			function updateRows(rows) {
+				const table = document.getElementById("table-body");
+				table.innerHTML = "";
+
+				rows.forEach(row => {
+					table.innerHTML += `
+					<tr>
+						<td>${row[0]}</td>
+						<td>${row[1]}</td>
+						<td>${row[2]}</td>
+					</tr>
+					`;
+				})
+			}
+
+			const shop = new Shop([
+				new LegendaryItem("Sulfuras, Hand of Ragnaros", 80),
+				new BasicItem("Aged Brie", 10, 0, 1),
+				new BasicItem("Witchwood Apple", 3, 15),
+				new BasicItem("Diving Elixir", 11, 50),
+				new BackstagePass("Backstage passes to a TAFKAL80ETC concert", 15, 5),
+				new BackstagePass("Backstage passes to a TAFKAL80ETC concert", 25, 5),
+				new BackstagePass("Backstage passes to an Ice Cream Boys concert", 25, 5),
+				new ConjuredItem("Conjured Wizard Hat", 20, 50),
+				new ConjuredItem("Conjured Wizard Robes", 16, 50)
+			]);
+
+			shop.printStock();
+
+			setTableHeader(`Shop Items`);
+			const rows = shop.items.map(item => [item.name, item.sellIn, item.quality]);
+			updateRows(rows);
+
+			function nextDay() {
+				shop.updateQuality();
+				shop.printStock();
+
+				setTableHeader(`End of day ${shop.day}`);
+				const rows = shop.items.map(item => [item.name, item.sellIn, item.quality]);
+				updateRows(rows);
+			}
+		</script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+	</body>
+</html>
