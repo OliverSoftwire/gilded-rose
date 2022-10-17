@@ -1,5 +1,5 @@
 import React from 'react';
-import { Column, useTable } from "react-table";
+import { Column, useSortBy, useTable } from "react-table";
 
 import { Item } from '../items';
 import DeleteButton from './DeleteButton';
@@ -14,7 +14,8 @@ export default function Table() {
 			{
 				accessor: () => "delete",
 				id: "delete",
-				Cell: () => (<DeleteButton></DeleteButton>)
+				Cell: () => (<DeleteButton></DeleteButton>),
+				disableSortBy: true
 			},
 			{
 				Header: "Item Name",
@@ -32,7 +33,11 @@ export default function Table() {
 		[]
 	);
 
-	const tableInstance = useTable({ columns, data });
+	const tableInstance = useTable(
+		{ columns, data },
+		useSortBy
+	);
+
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -43,39 +48,34 @@ export default function Table() {
 
 	return (
 		<table {...getTableProps()} className="table">
-			<thead>
-				{
-					headerGroups.map(headerGroup => (
-						<tr {...headerGroup.getHeaderGroupProps()}>
-							{
-								headerGroup.headers.map(column => (
-									<th {...column.getHeaderProps()}>
-										{ column.render("Header") }
-									</th>
-								))
-							}
-						</tr>
-					))
-				}
-			</thead>
-			<tbody {...getTableBodyProps()}>
-				{
-					rows.map(row => {
-						prepareRow(row);
-						return (
-							<tr {...row.getRowProps()}>
-								{
-									row.cells.map(cell => (
-										<td {...cell.getCellProps()}>
-											{ cell.render("Cell") }
-										</td>
-									))
-								}
-							</tr>
-						)
-					})
-				}
-			</tbody>
+			<thead>{
+				headerGroups.map(headerGroup => (
+					<tr {...headerGroup.getHeaderGroupProps()}>{
+						headerGroup.headers.map(column => (
+							<th {...column.getHeaderProps(column.getSortByToggleProps())}>
+								{ column.render("Header") }
+								<span>{
+									column.isSorted ? column.isSortedDesc ? " 🔽" : " 🔼" : ""
+								}</span>
+							</th>
+						))
+					}</tr>
+				))
+			}</thead>
+			<tbody {...getTableBodyProps()}>{
+				rows.map(row => {
+					prepareRow(row);
+					return (
+						<tr {...row.getRowProps()}>{
+							row.cells.map(cell => (
+								<td {...cell.getCellProps()}>{
+									cell.render("Cell")
+								}</td>
+							))
+						}</tr>
+					)
+				})
+			}</tbody>
 		</table>
 	);
 }
