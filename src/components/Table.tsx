@@ -1,5 +1,5 @@
 import React from 'react';
-import { Column, useSortBy, useTable } from "react-table";
+import { Column, useFlexLayout, useSortBy, useTable } from "react-table";
 
 import { Item } from '../items';
 import DeleteButton from './DeleteButton';
@@ -7,7 +7,7 @@ import DeleteButton from './DeleteButton';
 import "./Table.css"
 
 export default function Table() {
-	const [data, setData] = React.useState<Item[]>([new Item("test", 0,0 )]);
+	const [data, setData] = React.useState<Item[]>([new Item("foo", 1, 2), new Item("bar", 3, 4)]);
 
 	const columns = React.useMemo<Column<Item>[]>(
 		() => [
@@ -15,7 +15,8 @@ export default function Table() {
 				accessor: () => "delete",
 				id: "delete",
 				Cell: () => (<DeleteButton></DeleteButton>),
-				disableSortBy: true
+				disableSortBy: true,
+				width: 15
 			},
 			{
 				Header: "Item Name",
@@ -35,7 +36,8 @@ export default function Table() {
 
 	const tableInstance = useTable(
 		{ columns, data },
-		useSortBy
+		useSortBy,
+		useFlexLayout
 	);
 
 	const {
